@@ -68,7 +68,7 @@ public class Withdraws extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        AmountTb = new javax.swing.JTextField();
         jButton6 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -140,13 +140,18 @@ public class Withdraws extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 0, 204));
         jLabel7.setText("AMOUNT:");
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(255, 0, 51));
+        AmountTb.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        AmountTb.setForeground(new java.awt.Color(255, 0, 51));
 
         jButton6.setBackground(new java.awt.Color(204, 204, 204));
         jButton6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jButton6.setForeground(new java.awt.Color(0, 0, 255));
         jButton6.setText("WITHDRAW");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton6MouseClicked(evt);
+            }
+        });
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -183,7 +188,7 @@ public class Withdraws extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(AmountTb, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(124, 124, 124))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -209,7 +214,7 @@ public class Withdraws extends javax.swing.JFrame {
                     .addComponent(BalLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AmountTb, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(20, 20, 20)
                 .addComponent(jButton6)
@@ -237,6 +242,37 @@ public class Withdraws extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
+        if(AmountTb.getText().isEmpty() || AmountTb.getText().equals(0) )
+        {
+            JOptionPane.showMessageDialog(this, "Enter Valid Amount");
+        }else  if (OldBalance < Integer.valueOf(AmountTb.getText()))
+        {
+            JOptionPane.showMessageDialog(this, "No Enough Balance");
+        }else
+        {
+            try {
+            String Query = "Update AccountTbl set Balance = ? where AccNum = ?";
+            Con = DriverManager.getConnection("jdbc:mysql://localhost:3306/atmdb","root", "");
+            PreparedStatement ps = Con.prepareStatement(Query);
+            ps.setInt(1, OldBalance - Integer.valueOf(AmountTb.getText()));
+            ps.setInt(2, MyAccNum);
+            
+            if(ps.executeUpdate() == 1 )
+            {
+                JOptionPane.showMessageDialog(this, "Balance Updated");
+            }else
+            {
+                JOptionPane.showMessageDialog(this, "Missing information");
+            }
+            
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e);
+            }
+
+        }
+    }//GEN-LAST:event_jButton6MouseClicked
 
     /**
      * @param args the command line arguments
@@ -275,6 +311,7 @@ public class Withdraws extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField AmountTb;
     private javax.swing.JLabel BalLbl;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel2;
@@ -287,6 +324,5 @@ public class Withdraws extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
