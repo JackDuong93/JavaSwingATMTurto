@@ -9,6 +9,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -132,6 +134,11 @@ public class Deposit extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 255));
         jLabel4.setText("BACK");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(0, 0, 204));
@@ -228,6 +235,34 @@ public class Deposit extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_DEPOSITBTNActionPerformed
 
+    String MyDate;
+    public void GetDate()
+    {
+        Date d = new Date();
+        SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy");
+        MyDate = s.format(d);
+    }
+    
+    private void DepositMoney()
+    {
+        try {
+            GetDate();
+            Con = DriverManager.getConnection("jdbc:mysql://localhost:3306/atmdb","root", "");
+                PreparedStatement Add = Con.prepareStatement("insert into TransactionTbl values(?,?,?,?,?)");
+                Add.setString(1, null);
+                Add.setInt(2, MyAccNum);
+                Add.setString(3, "Deposit");
+                Add.setString(4, MyDate);
+                Add.setInt(5, Integer.parseInt(AmountTb.getText()));
+                int row = Add.executeUpdate();
+                //JOptionPane.showMessageDialog(this, "Account saved");
+                Con.close();
+                //Clear();
+        } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e);
+        }
+    }
+    
     private void DEPOSITBTNMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DEPOSITBTNMouseClicked
         if(AmountTb.getText().isEmpty() || AmountTb.getText().equals(0) )
         {
@@ -243,6 +278,7 @@ public class Deposit extends javax.swing.JFrame {
             if(ps.executeUpdate() == 1 )
             {
                 JOptionPane.showMessageDialog(this, "Balance Updated");
+                DepositMoney();
             }else
             {
                 JOptionPane.showMessageDialog(this, "Missing information");
@@ -254,6 +290,11 @@ public class Deposit extends javax.swing.JFrame {
 
         }
     }//GEN-LAST:event_DEPOSITBTNMouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        new MainMenu(MyAccNum).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments
